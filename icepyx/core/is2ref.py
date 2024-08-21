@@ -13,12 +13,13 @@ import earthaccess
 
 def _validate_product(product):
     """
-    Confirm a valid ICESat-2 product was specified
+    Confirm a valid ICESat-2 or GEDI product was specified
     """
     error_msg = "A valid product string was not provided. Check user input, if given, or file metadata."
     if isinstance(product, str):
         product = str.upper(product)
         assert product in [
+            # ICESat-2 from NSIDC
             "ATL01",
             "ATL02",
             "ATL03",
@@ -41,6 +42,11 @@ def _validate_product(product):
             "ATL20",
             "ATL21",
             "ATL23",
+            # GEDI from LP DAAC
+            "GEDI_L1B",
+            "GEDI_L2A",
+            "GEDI_L2B",
+            # GEDI from ORNL
         ], error_msg
     else:
         raise TypeError(error_msg)
