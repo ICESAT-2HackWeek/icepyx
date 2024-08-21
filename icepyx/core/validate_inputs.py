@@ -109,10 +109,10 @@ def tracks(track):
 def check_s3bucket(path):
     """
     Check if the given path is an s3 path. Raise a warning if the data being referenced is not
-    in the NSIDC bucket
+    in the NSIDC (ICESat-2) or LP DAAC (GEDI) bucket
     """
     split_path = path.split("/")
-    if split_path[0] == "s3:" and split_path[2] != "nsidc-cumulus-prod-protected":
+    if split_path[0] == "s3:" and split_path[2] != ("nsidc-cumulus-prod-protected" or "lp-prod-protected"):
         warnings.warn(
             "s3 data being read from outside the NSIDC data bucket. Icepyx can "
             "read this data, but available data lists may not be accurate.",
