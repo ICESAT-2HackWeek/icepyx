@@ -20,6 +20,9 @@ def list_of_dict_vals(input_dict):
     return wanted_list
 
 
+# THOUGHTS/BRAINSTORM: turn Variables into a superclass/subclass setup that has the variables module herein,
+# and handles the groups/vars parsing stuff separately from the dataset stuff
+
 # REFACTOR: class needs better docstrings
 # DevNote: currently this class is not tested
 class Variables(EarthdataAuthMixin):
@@ -80,7 +83,7 @@ class Variables(EarthdataAuthMixin):
 
         # initialize authentication properties
         EarthdataAuthMixin.__init__(self, auth=auth)
-        """
+
         # Set the product and version from either the input args or the file
         if path:
             self._path = val.check_s3bucket(path)
@@ -105,7 +108,7 @@ class Variables(EarthdataAuthMixin):
             raise TypeError(
                 "Either a path or a product need to be given as input arguments."
             )
-        """
+
         self._path = path
 
         self._avail = avail
