@@ -42,7 +42,7 @@ class HDF5ArrowTableCreator:
         self.h5obj = self._initialize_h5coro()
         self.promise = self._read_datasets()
 
-    # TODO: Add other source protocols, http and local file system
+    # TODO: Add http driver option
     def _initialize_h5coro(self) -> h5coro.H5Coro:
         """Initialize the h5coro object with the provided uri and credentials."""
         if self.uri.startswith('s3://') and not self.credentials:
