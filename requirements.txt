@@ -4,6 +4,7 @@ datashader
 earthaccess>=0.5.1
 fiona
 geopandas
+h5coro>=0.0.7
 h5netcdf
 h5py
 holoviews

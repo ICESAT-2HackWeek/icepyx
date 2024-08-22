@@ -55,7 +55,7 @@ class HDF5ArrowTableCreator:
         if self.uri.startswith('s3://') and self.credentials:
             args['resource'] = self.uri.replace('s3://', '')
             args['driverClass'] = s3driver.S3Driver
-            args['credentials'] = self.credentials
+            args['credentials'] = dict(self.credentials)
         else:
             args['resource'] = self.uri
             args['driverClass'] = filedriver.FileDriver
@@ -138,18 +138,26 @@ class HDF5ArrowTableCreator:
         
         return self._build_table(pyarrow_arrays, schema_fields, geom_points)
 
+
+def create_table(
+    uri: str,
+    datasets: HDF5Datasets,
+    credentials: AWSCredentials,
+    mask_using: str = None
+) -> pa.Table:
+    creator = HDF5ArrowTableCreator(uri, datasets, credentials, mask_using)
+    return creator.create_table()
+    
 def concat_tables(uris: list[str], datasets: HDF5Datasets, credentials: AWSCredentials, mask_using: str = None) -> pa.Table:
     """
     Concatenate multiple pyarrow tables into a single table.
     Must have the same schema.
     """
     tables = []
-    def _create_table(uri: str) -> pa.Table:
-        creator = HDF5ArrowTableCreator(uri, datasets, credentials, mask_using)
-        return creator.create_table()
+
     with concurrent.futures.ProcessPoolExecutor() as executor:
         shared_args = dict(datasets=datasets, mask_using=mask_using, credentials=credentials)
-        futures = [executor.submit(_create_table, uri=uri, **shared_args) for uri in uris]
+        futures = [executor.submit(create_table, uri=uri, **shared_args) for uri in uris]
         completed_futures, _ = concurrent.futures.wait(futures) 
         for future in completed_futures:
             try:
@@ -159,7 +167,7 @@ def concat_tables(uris: list[str], datasets: HDF5Datasets, credentials: AWSCrede
             except Exception as exception:
                 print(exception) 
             
-    return pa.concat_tables(tables)      
+        return pa.concat_tables(tables)      
 
 # Example usage:
 # Generate credentials
